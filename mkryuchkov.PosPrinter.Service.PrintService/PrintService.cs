@@ -1,6 +1,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using ESCPOS_NET;
+using ESCPOS_NET.Emitters;
+using ESCPOS_NET.Utilities;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using mkryuchkov.PosPrinter.Service.Core;
@@ -43,16 +46,41 @@ namespace mkryuchkov.PosPrinter.PrintService
             }
         }
 
-        private Task PrintItem(string item, CancellationToken cancellationToken)
-        {
-            _logger.LogInformation($"PRINTING {item}");
-            return Task.CompletedTask;
-        }
-
         public override Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"{nameof(PrintService)} is stopping.");
             return base.StopAsync(cancellationToken);
+        }
+
+        private async Task PrintItem(string item, CancellationToken cancellationToken)
+        {
+            while (true)
+            {
+                try
+                {
+                    _logger.LogDebug($"Printing {item}");
+
+                    using var printer = new SerialPrinter("COM4", 9600);
+                    var emitter = new EPSON();
+                    printer.Write(ByteSplicer.Combine(
+                        emitter.Initialize(),
+                        emitter.Print(item),
+                        emitter.FeedLines(3)
+                    ));
+
+                    await Task.Delay(5000, cancellationToken);
+
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Error trying to print {item}");
+                }
+
+                await Task.Delay(5000, cancellationToken); // next try delay
+            }
+
+            _logger.LogDebug($"Printed {item}");
         }
     }
 }

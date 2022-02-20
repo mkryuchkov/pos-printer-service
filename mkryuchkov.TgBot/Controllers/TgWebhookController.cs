@@ -18,7 +18,7 @@ namespace mkryuchkov.TgBot.Controllers
                 return BadRequest();
             }
 
-            await updateHandler.Handle(update, cancellationToken);
+            await updateHandler.Handle(update, cancellationToken).ConfigureAwait(false);
 
             return Ok();
         }

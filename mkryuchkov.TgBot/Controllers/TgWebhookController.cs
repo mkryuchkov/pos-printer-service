@@ -1,22 +1,24 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
 
-namespace mkryuchkov.PosPrinter.TgBot.Controllers
+namespace mkryuchkov.TgBot.Controllers
 {
     public class TgWebhookController : ControllerBase
     {
         [HttpPost]
         public async Task<IActionResult> Post(
-            [FromServices] IPosPrinterBot posPrinterBot,
-            [FromBody] Update update)
+            [FromServices] ITgUpdateHandler updateHandler,
+            [FromBody] Update update,
+            CancellationToken cancellationToken)
         {
             if (update == null)
             {
                 return BadRequest();
             }
 
-            await posPrinterBot.HandleTgUpdate(update);
+            await updateHandler.Handle(update, cancellationToken);
 
             return Ok();
         }

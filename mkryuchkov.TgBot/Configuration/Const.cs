@@ -1,4 +1,4 @@
-﻿namespace mkryuchkov.PosPrinter.TgBot.Configuration
+﻿namespace mkryuchkov.TgBot.Configuration
 {
     internal static class Const
     {

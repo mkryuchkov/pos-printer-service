@@ -4,8 +4,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using mkryuchkov.PosPrinter.TgBot.Configuration;
-using mkryuchkov.PosPrinter.TgBot.Controllers;
+using mkryuchkov.PosPrinter.Service.Core;
+using mkryuchkov.PosPrinter.Service.Queue;
+using mkryuchkov.PosPrinter.Service.TgBot;
+using mkryuchkov.TgBot;
+using mkryuchkov.TgBot.Configuration;
+using mkryuchkov.TgBot.Controllers;
 
 namespace mkryuchkov.PosPrinter.App.Main
 {
@@ -20,7 +24,11 @@ namespace mkryuchkov.PosPrinter.App.Main
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureTgBot(Configuration);
+            services
+                .AddSingleton<IPrintQueue, PrintQueue>()
+                .AddHostedService<PrintService.PrintService>()
+                .ConfigureTgBot(Configuration)
+                .AddSingleton<ITgUpdateHandler, PosPrinterBot>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<BotConfig> botConfig)

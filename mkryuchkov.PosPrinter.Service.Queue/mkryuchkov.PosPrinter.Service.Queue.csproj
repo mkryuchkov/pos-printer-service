@@ -2,12 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>mkryuchkov.PosPrinter.PrintService</RootNamespace>
+        <RootNamespace>mkryuchkov.PosPrinter.Service.Queue</RootNamespace>
     </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\mkryuchkov.PosPrinter.Service.Core\mkryuchkov.PosPrinter.Service.Core.csproj" />
-    </ItemGroup>
 
     <ItemGroup>
       <Reference Include="Microsoft.Extensions.Hosting.Abstractions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
@@ -16,6 +12,10 @@
       <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
         <HintPath>..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\5.0.14\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\mkryuchkov.PosPrinter.Service.Core\mkryuchkov.PosPrinter.Service.Core.csproj" />
     </ItemGroup>
 
 </Project>

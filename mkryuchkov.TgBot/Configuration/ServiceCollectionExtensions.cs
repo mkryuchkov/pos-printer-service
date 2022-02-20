@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 
-namespace mkryuchkov.PosPrinter.TgBot.Configuration
+namespace mkryuchkov.TgBot.Configuration
 {
     public static class ServiceCollectionExtensions
     {
@@ -20,8 +20,6 @@ namespace mkryuchkov.PosPrinter.TgBot.Configuration
                     new TelegramBotClient(
                         configuration[$"{nameof(BotConfig)}:Token"],
                         httpClient));
-
-            services.AddScoped<IPosPrinterBot, PosPrinterBot>();
 
             services
                 .AddControllers()

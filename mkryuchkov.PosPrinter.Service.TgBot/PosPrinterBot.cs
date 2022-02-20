@@ -1,39 +1,45 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using mkryuchkov.TgBot;
+using mkryuchkov.PosPrinter.Service.Core;
 
-namespace mkryuchkov.PosPrinter.TgBot
+namespace mkryuchkov.PosPrinter.Service.TgBot
 {
-    public class PosPrinterBot : IPosPrinterBot
+    public class PosPrinterBot : ITgUpdateHandler
     {
         private readonly ILogger<PosPrinterBot> _logger;
         private readonly ITelegramBotClient _botClient;
+        private readonly IPrintQueue _printQueue;
 
         public PosPrinterBot(
             ILogger<PosPrinterBot> logger,
-            ITelegramBotClient botClient)
+            ITelegramBotClient botClient,
+            IPrintQueue printQueue)
         {
             _logger = logger;
             _botClient = botClient;
+            _printQueue = printQueue;
         }
 
-        public async Task HandleTgUpdate(Update update)
+        public async Task Handle(Update update, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Update received. Type: {update.Type}");
 
             if (update.Type == UpdateType.Message)
             {
                 await _botClient.SendTextMessageAsync(update.Message!.Chat.Id,
-                        $"Hi. Your message {update.Message.Text}");
+                    $"Hi. Your message {update.Message.Text}", cancellationToken: cancellationToken);
+                await _printQueue.Enqueue(update.Message.Text, cancellationToken);
             }
             else
             {
                 await _botClient.SendTextMessageAsync(update.Message!.Chat.Id,
-                    $"Hi. Your update ```{JsonSerializer.Serialize(update)}```");
+                    $"Hi. Your update ```{JsonSerializer.Serialize(update)}```", cancellationToken: cancellationToken);
             }
         }
     }

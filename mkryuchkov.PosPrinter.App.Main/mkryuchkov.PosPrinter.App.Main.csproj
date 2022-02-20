@@ -6,6 +6,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\mkryuchkov.PosPrinter.Service.PrintService\mkryuchkov.PosPrinter.Service.PrintService.csproj" />
+      <ProjectReference Include="..\mkryuchkov.PosPrinter.Service.Queue\mkryuchkov.PosPrinter.Service.Queue.csproj" />
       <ProjectReference Include="..\mkryuchkov.PosPrinter.Service.TgBot\mkryuchkov.PosPrinter.Service.TgBot.csproj" />
     </ItemGroup>
 

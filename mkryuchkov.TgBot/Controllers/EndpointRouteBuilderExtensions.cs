@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using mkryuchkov.PosPrinter.TgBot.Configuration;
+using mkryuchkov.TgBot.Configuration;
 
-namespace mkryuchkov.PosPrinter.TgBot.Controllers
+namespace mkryuchkov.TgBot.Controllers
 {
     public static class EndpointRouteBuilderExtensions
     {

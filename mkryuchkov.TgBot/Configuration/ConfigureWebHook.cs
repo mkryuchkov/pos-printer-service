@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types.InputFiles;
 
-namespace mkryuchkov.PosPrinter.TgBot.Configuration
+namespace mkryuchkov.TgBot.Configuration
 {
     public class ConfigureWebHook : IHostedService
     {

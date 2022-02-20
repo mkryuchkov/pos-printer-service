@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using ESCPOS_NET;
 using ESCPOS_NET.Utilities;
@@ -14,12 +15,20 @@ namespace pt_210_test
 
             IPrinter printer = OperatingSystem.IsLinux()
                 ? new FilePrinter(filePath: "/dev/usb/lp0") // "/dev/rfcomm0"
-                : new SerialPrinter("COM3", 9600);
+                : new SerialPrinter("COM4", 9600);
 
             var emitter = new Pt210();
             printer.Write(ByteSplicer.Combine(
                 emitter.Initialize(),
-                emitter.Print("Hello!\n"),
+                // emitter.Print("Hello! Привет! 便携打印机\n"),
+                // new byte[]
+                // {
+                //     0x41, // A eng utf8
+                //     0x61, // a eng utf8
+                //     0x80, // A rus cp866
+                //     0xA0, // a rus cp866 
+                // },
+                CodePagesEncodingProvider.Instance.GetEncoding(866)!.GetBytes("Hello! Привет!\n"),
                 emitter.PrintImage(await File.ReadAllBytesAsync("./cube.jpg")),
                 emitter.FeedLines(3)
             ));

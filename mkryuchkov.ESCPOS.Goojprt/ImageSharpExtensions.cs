@@ -3,7 +3,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Dithering;
 
-namespace pt_210_test
+namespace mkryuchkov.ESCPOS.Goojprt
 {
     public static class ImageSharpExtensions
     {

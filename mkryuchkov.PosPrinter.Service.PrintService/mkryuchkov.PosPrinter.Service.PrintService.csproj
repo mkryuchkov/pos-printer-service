@@ -6,11 +6,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\mkryuchkov.ESCPOS.Goojprt\mkryuchkov.ESCPOS.Goojprt.csproj" />
       <ProjectReference Include="..\mkryuchkov.PosPrinter.Service.Core\mkryuchkov.PosPrinter.Service.Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="ESCPOS_NET" Version="2.0.0" />
     </ItemGroup>
 
 </Project>

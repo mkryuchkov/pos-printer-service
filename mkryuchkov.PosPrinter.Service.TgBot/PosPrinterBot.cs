@@ -33,13 +33,15 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
             if (update.Type == UpdateType.Message)
             {
                 await _botClient.SendTextMessageAsync(update.Message!.Chat.Id,
-                    $"Hi. Your message {update.Message.Text}", cancellationToken: cancellationToken);
+                    $"Hi. Your message:\n```{update.Message.Text}```",
+                    ParseMode.Markdown, cancellationToken: cancellationToken);
                 await _printQueue.Enqueue(update.Message.Text, cancellationToken);
             }
             else
             {
                 await _botClient.SendTextMessageAsync(update.Message!.Chat.Id,
-                    $"Hi. Your update ```{JsonSerializer.Serialize(update)}```", cancellationToken: cancellationToken);
+                    $"Hi. Your update:\n```{JsonSerializer.Serialize(update)}```",
+                    ParseMode.Markdown, cancellationToken: cancellationToken);
             }
         }
     }

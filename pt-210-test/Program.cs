@@ -4,11 +4,15 @@ using System.Text;
 using System.Threading.Tasks;
 using ESCPOS_NET;
 using ESCPOS_NET.Utilities;
+using mkryuchkov.ESCPOS.Goojprt;
 
 namespace pt_210_test
 {
     class Program
     {
+        private static readonly Encoding Cp866 =
+            CodePagesEncodingProvider.Instance.GetEncoding(866);
+
         static async Task Main(string[] args)
         {
             Console.WriteLine("Start");
@@ -20,17 +24,10 @@ namespace pt_210_test
             var emitter = new Pt210();
             printer.Write(ByteSplicer.Combine(
                 emitter.Initialize(),
-                // emitter.Print("Hello! Привет! 便携打印机\n"),
-                // new byte[]
-                // {
-                //     0x41, // A eng utf8
-                //     0x61, // a eng utf8
-                //     0x80, // A rus cp866
-                //     0xA0, // a rus cp866 
-                // },
-                CodePagesEncodingProvider.Instance.GetEncoding(866)!.GetBytes("Hello! Привет!\n"),
+                emitter.Print("Hello! Привет!\n", Cp866),
                 emitter.PrintImage(await File.ReadAllBytesAsync("./cube.jpg")),
-                emitter.FeedLines(3)
+                emitter.FeedLines(3),
+                emitter.Beep(2)
             ));
 
             Console.WriteLine("End");

@@ -1,17 +1,20 @@
 using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ESCPOS_NET;
-using ESCPOS_NET.Emitters;
 using ESCPOS_NET.Utilities;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using mkryuchkov.ESCPOS.Goojprt;
 using mkryuchkov.PosPrinter.Service.Core;
 
 namespace mkryuchkov.PosPrinter.PrintService
 {
     public class PrintService : BackgroundService
     {
+        private static readonly Encoding Cp866 =
+            CodePagesEncodingProvider.Instance.GetEncoding(866);
         private readonly ILogger<PrintService> _logger;
         private readonly IPrintQueue _printQueue;
 
@@ -61,10 +64,10 @@ namespace mkryuchkov.PosPrinter.PrintService
                     _logger.LogDebug($"Printing {item}");
 
                     using var printer = new SerialPrinter("COM4", 9600);
-                    var emitter = new EPSON();
+                    var emitter = new Pt210();
                     printer.Write(ByteSplicer.Combine(
                         emitter.Initialize(),
-                        emitter.Print(item),
+                        emitter.Print(item, Cp866),
                         emitter.FeedLines(3)
                     ));
 

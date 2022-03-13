@@ -7,23 +7,27 @@ using ESCPOS_NET.Utilities;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using mkryuchkov.ESCPOS.Goojprt;
+using mkryuchkov.PosPrinter.Model.Core;
 using mkryuchkov.PosPrinter.Service.Core;
 
 namespace mkryuchkov.PosPrinter.PrintService
 {
-    public class PrintService : BackgroundService
+    public sealed class PrintService : BackgroundService
     {
         private static readonly Encoding Cp866 =
             CodePagesEncodingProvider.Instance.GetEncoding(866);
         private readonly ILogger<PrintService> _logger;
-        private readonly IPrintQueue _printQueue;
+        private readonly IQueue<IPrintQuery<int>> _printQueue;
+        private readonly IQueue<IPrintResult<int>> _resultQueue;
 
         public PrintService(
             ILogger<PrintService> logger,
-            IPrintQueue printQueue)
+            IQueue<IPrintQuery<int>> printQueue,
+            IQueue<IPrintResult<int>> resultQueue)
         {
             _logger = logger;
             _printQueue = printQueue;
+            _resultQueue = resultQueue;
         }
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -55,7 +59,7 @@ namespace mkryuchkov.PosPrinter.PrintService
             return base.StopAsync(cancellationToken);
         }
 
-        private async Task PrintItem(string item, CancellationToken cancellationToken)
+        private async Task PrintItem(IPrintQuery<int> item, CancellationToken cancellationToken)
         {
             while (true)
             {
@@ -63,15 +67,19 @@ namespace mkryuchkov.PosPrinter.PrintService
                 {
                     _logger.LogDebug($"Printing {item}");
 
-                    using var printer = new SerialPrinter("COM4", 9600);
-                    var emitter = new Pt210();
-                    printer.Write(ByteSplicer.Combine(
-                        emitter.Initialize(),
-                        emitter.Print(item, Cp866),
-                        emitter.FeedLines(3)
-                    ));
-
-                    await Task.Delay(5000, cancellationToken);
+                    if (item.Type == PrintQueryType.Text) // todo: other types // refactor
+                    {
+                        using var printer = new SerialPrinter("COM4", 9600);
+                        var emitter = new Pt210();
+                        printer.Write(ByteSplicer.Combine(
+                            emitter.Initialize(),
+                            emitter.Print(item.Text, Cp866),
+                            emitter.FeedLines(3),
+                            emitter.Beep()
+                        ));
+                        
+                        await Task.Delay(5000, cancellationToken);
+                    }
 
                     break;
                 }
@@ -83,6 +91,11 @@ namespace mkryuchkov.PosPrinter.PrintService
                 await Task.Delay(5000, cancellationToken); // next try delay
             }
 
+            await _resultQueue.Enqueue(new PrintResult<int>
+            {
+                Id = item.Id,
+                Success = true
+            }, cancellationToken);
             _logger.LogDebug($"Printed {item}");
         }
     }

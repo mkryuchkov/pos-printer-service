@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using mkryuchkov.PosPrinter.Model.Core;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -14,16 +15,16 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
     {
         private readonly ILogger<PosPrinterBot> _logger;
         private readonly ITelegramBotClient _botClient;
-        private readonly IPrintQueue _printQueue;
+        private readonly IQueue<IPrintQuery<int>> _queue;
 
         public PosPrinterBot(
             ILogger<PosPrinterBot> logger,
             ITelegramBotClient botClient,
-            IPrintQueue printQueue)
+            IQueue<IPrintQuery<int>> queue)
         {
             _logger = logger;
             _botClient = botClient;
-            _printQueue = printQueue;
+            _queue = queue;
         }
 
         public async Task Handle(Update update, CancellationToken cancellationToken)
@@ -35,7 +36,12 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
                 await _botClient.SendTextMessageAsync(update.Message!.Chat.Id,
                     $"Hi. Your message:\n```{update.Message.Text}```",
                     ParseMode.Markdown, cancellationToken: cancellationToken);
-                await _printQueue.Enqueue(update.Message.Text, cancellationToken);
+                await _queue.Enqueue(new PrintQuery<int>
+                {
+                    Id = update.Message.MessageId,
+                    Type = PrintQueryType.Text,
+                    Text = update.Message.Text
+                }, cancellationToken);
             }
             else
             {

@@ -8,5 +8,9 @@
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\mkryuchkov.PosPrinter.Model.Core\mkryuchkov.PosPrinter.Model.Core.csproj" />
+    </ItemGroup>
 
 </Project>

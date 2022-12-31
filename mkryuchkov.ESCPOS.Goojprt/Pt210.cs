@@ -4,6 +4,7 @@ using ESCPOS_NET.Emitters;
 using ESCPOS_NET.Emitters.BaseCommandValues;
 using ESCPOS_NET.Utilities;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing.Processors.Dithering;
 
 namespace mkryuchkov.ESCPOS.Goojprt
@@ -28,7 +29,7 @@ namespace mkryuchkov.ESCPOS.Goojprt
                 throw new ArgumentOutOfRangeException($"Count ({count}) must be in the range of 1 to 10.");
             }
 
-            return new byte[] {Cmd.ESC, 0x42, count, 0x04};
+            return new byte[] { Cmd.ESC, 0x42, count, 0x04 };
         }
 
         /// <summary>
@@ -71,20 +72,20 @@ namespace mkryuchkov.ESCPOS.Goojprt
             int width;
             int height;
             byte[] imageData;
-            using (var img = Image.Load(image))
+            using (var img = Image.Load<Rgba32>(image))
             {
                 imageData = img.ToSingleBitPixelByteArray(maxWidth, ditherAlg: dithering);
                 height = img.Height;
                 width = img.Width;
             }
 
-            var heightL = (byte) height;
-            var heightH = (byte) (height >> 8);
+            var heightL = (byte)height;
+            var heightH = (byte)(height >> 8);
             var byteWidth = (width + 7 & -8) / 8; // packing dots into bytes
-            var widthL = (byte) byteWidth;
-            var widthH = (byte) (byteWidth >> 8);
+            var widthL = (byte)byteWidth;
+            var widthH = (byte)(byteWidth >> 8);
             result.Append(
-                new byte[] {Cmd.GS, Images.ImageCmdLegacy, 0x30, 0x00, widthL, widthH, heightL, heightH});
+                new byte[] { Cmd.GS, Images.ImageCmdLegacy, 0x30, 0x00, widthL, widthH, heightL, heightH });
 
             result.Append(imageData);
 

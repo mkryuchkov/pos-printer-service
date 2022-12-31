@@ -26,14 +26,14 @@ namespace mkryuchkov.PosPrinter.Service.Queue
         {
             await _queue.Writer.WriteAsync(entity, cancellationToken);
 
-            _logger.LogDebug("Text {0} enqueued. Queue size: {1}", entity, _queue.Reader.Count);
+            _logger.LogDebug("Text {entity} enqueued. Queue size: {count}", entity, _queue.Reader.Count);
         }
 
         public async Task<TEntity> Dequeue(CancellationToken cancellationToken)
         {
             var entity = await _queue.Reader.ReadAsync(cancellationToken);
 
-            _logger.LogDebug("Text {0} dequeued. Queue size {1}", entity, _queue.Reader.Count);
+            _logger.LogDebug("Text {entity} dequeued. Queue size {count}", entity, _queue.Reader.Count);
 
             return entity;
         }

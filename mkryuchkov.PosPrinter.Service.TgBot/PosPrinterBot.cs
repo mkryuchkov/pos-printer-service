@@ -29,7 +29,7 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
 
         public async Task Handle(Update update, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Update received. Type: {update.Type}");
+            _logger.LogInformation("Update received. Type: {type}", update.Type);
 
             if (update.Type == UpdateType.Message)
             {

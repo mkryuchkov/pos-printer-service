@@ -33,7 +33,7 @@ namespace mkryuchkov.TgBot.Configuration
             var botClient = scope.ServiceProvider.GetRequiredService<ITelegramBotClient>();
 
             var webhookAddress = @$"{_config.Host}/bot/{_config.Token}";
-            _logger.LogInformation("Setting webhook: {0}", webhookAddress);
+            _logger.LogInformation("Setting webhook: {address}", webhookAddress);
 
             InputFileStream certInput = null;
             try
@@ -43,7 +43,7 @@ namespace mkryuchkov.TgBot.Configuration
             }
             catch (Exception ex)
             {
-                _logger.LogWarning("Certificate is missing: {0}", ex.Message);
+                _logger.LogWarning("Certificate is missing: {message}", ex.Message);
             }
             finally
             {

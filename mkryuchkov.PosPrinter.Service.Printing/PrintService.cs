@@ -48,7 +48,7 @@ namespace mkryuchkov.PosPrinter.PrintService
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error printing item {0}", item);
+                    _logger.LogError(ex, "Error printing item {item}", item);
                 }
             }
         }
@@ -65,7 +65,7 @@ namespace mkryuchkov.PosPrinter.PrintService
             {
                 try
                 {
-                    _logger.LogDebug($"Printing {item}");
+                    _logger.LogDebug("Printing {item}", item);
 
                     if (item.Type == PrintQueryType.Text) // todo: other types // refactor
                     {
@@ -77,7 +77,7 @@ namespace mkryuchkov.PosPrinter.PrintService
                             emitter.FeedLines(3),
                             emitter.Beep()
                         ));
-                        
+
                         await Task.Delay(5000, cancellationToken);
                     }
 
@@ -85,7 +85,7 @@ namespace mkryuchkov.PosPrinter.PrintService
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"Error trying to print {item}");
+                    _logger.LogError(ex, "Error trying to print {item}", item);
                 }
 
                 await Task.Delay(5000, cancellationToken); // next try delay
@@ -96,7 +96,7 @@ namespace mkryuchkov.PosPrinter.PrintService
                 Id = item.Id,
                 Success = true
             }, cancellationToken);
-            _logger.LogDebug($"Printed {item}");
+            _logger.LogDebug("Printed {item}", item);
         }
     }
 }

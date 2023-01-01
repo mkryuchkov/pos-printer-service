@@ -10,7 +10,7 @@ using mkryuchkov.ESCPOS.Goojprt;
 using mkryuchkov.PosPrinter.Model.Core;
 using mkryuchkov.PosPrinter.Service.Core;
 
-namespace mkryuchkov.PosPrinter.PrintService
+namespace mkryuchkov.PosPrinter.Service.Printing
 {
     public sealed class PrintService : BackgroundService
     {

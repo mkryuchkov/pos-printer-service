@@ -1,4 +1,4 @@
-﻿namespace mkryuchkov.PosPrinter.Service.PrintClient
+﻿namespace mkryuchkov.PosPrinter.Service.Printing
 {
     public sealed class PrintClient
     {

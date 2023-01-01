@@ -29,8 +29,8 @@ namespace mkryuchkov.PosPrinter.App.Main
             services
                 .AddSingleton<IQueue<IPrintQuery<int>>, PrintQueryQueue>()
                 .AddSingleton<IQueue<IPrintResult<int>>, PrintResultQueue>()
-                .AddHostedService<PrintService>()
-                .ConfigureTgBot(Configuration)
+                .AddQueueHandler<IPrintQuery<int>, PrintQueryHandler>()
+                .AddTgBot(Configuration)
                 .AddSingleton<ITgUpdateHandler, PosPrinterBot>();
         }
 

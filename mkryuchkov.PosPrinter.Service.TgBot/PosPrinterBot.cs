@@ -36,7 +36,7 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
                 await _botClient.SendTextMessageAsync(update.Message!.Chat.Id,
                     $"Hi. Your message:\n```{update.Message.Text}```",
                     ParseMode.Markdown, cancellationToken: cancellationToken);
-                await _queue.Enqueue(new PrintQuery<int>
+                await _queue.EnqueueAsync(new PrintQuery<int>
                 {
                     Id = update.Message.MessageId,
                     Type = PrintQueryType.Text,

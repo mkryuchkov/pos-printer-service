@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\mkryuchkov.PosPrinter.Service.Core\mkryuchkov.PosPrinter.Service.Core.csproj" />
-      <ProjectReference Include="..\mkryuchkov.TgBot\mkryuchkov.TgBot.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\mkryuchkov.PosPrinter.Service.Core\mkryuchkov.PosPrinter.Service.Core.csproj" />
+    <ProjectReference Include="..\mkryuchkov.TgBot\mkryuchkov.TgBot.csproj" />
+  </ItemGroup>
 
 </Project>

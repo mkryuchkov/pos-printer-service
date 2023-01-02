@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using ESCPOS_NET;
 using ESCPOS_NET.Utilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using mkryuchkov.ESCPOS.Goojprt;
 using mkryuchkov.PosPrinter.Model.Core;
 using mkryuchkov.PosPrinter.Service.Core;
+using mkryuchkov.PosPrinter.Service.Printing.Configuration;
 
 namespace mkryuchkov.PosPrinter.Service.Printing
 {
@@ -17,13 +19,16 @@ namespace mkryuchkov.PosPrinter.Service.Printing
             CodePagesEncodingProvider.Instance.GetEncoding(866);
 
         private readonly ILogger<PrintQueryHandler> _logger;
+        private readonly PrinterConfig _config;
         private readonly IQueue<IPrintResult<int>> _resultQueue;
 
         public PrintQueryHandler(
             ILogger<PrintQueryHandler> logger,
+            IOptions<PrinterConfig> config,
             IQueue<IPrintResult<int>> resultQueue)
         {
             _logger = logger;
+            _config = config.Value;
             _resultQueue = resultQueue;
         }
 

@@ -5,5 +5,6 @@
   <ItemGroup>
     <ProjectReference Include="..\mkryuchkov.PosPrinter.Service.Core\mkryuchkov.PosPrinter.Service.Core.csproj" />
     <ProjectReference Include="..\mkryuchkov.TgBot\mkryuchkov.TgBot.csproj" />
+    <ProjectReference Include="..\mkryuchkov.PosPrinter.Common\mkryuchkov.PosPrinter.Common.csproj" />
   </ItemGroup>
 </Project>

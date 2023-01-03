@@ -1,9 +1,10 @@
 ﻿namespace mkryuchkov.PosPrinter.Model.Core
 {
-    public class PrintResult<TId> : IPrintResult<TId>
+    public sealed class PrintResult<TInfo>
     {
-        public TId Id { get; init; }
+        public Guid Id { get; init; }
         public bool Success { get; set; }
         public string? ErrorData { get; set; }
+        public TInfo? Info { get; set; }
     }
 }

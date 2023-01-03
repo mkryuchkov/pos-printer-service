@@ -27,13 +27,13 @@ namespace mkryuchkov.PosPrinter.App.Main
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddSingleton<IQueue<IPrintQuery<int>>, PrintQueryQueue>()
-                .AddSingleton<IQueue<IPrintResult<int>>, PrintResultQueue>()
-                .AddPrinterConfig(Configuration)
-                .AddQueueHandler<IPrintQuery<int>, PrintQueryHandler>()
-                .AddTgBot(Configuration)
-                .AddSingleton<ITgUpdateHandler, TgUpdateHandler>();
+            services.AddSingleton<IQueue<PrintQuery<MessageInfo>>, PrintQueryQueue>();
+            services.AddSingleton<IQueue<PrintResult<MessageInfo>>, PrintResultQueue>();
+            services.AddPrinterConfig(Configuration);
+            services.AddQueueHandler<PrintQuery<MessageInfo>, PrintQueryHandler>();
+            services.AddQueueHandler<PrintResult<MessageInfo>, PrintResultHandler>();
+            services.AddTgBot(Configuration);
+            services.AddSingleton<ITgUpdateHandler, TgUpdateHandler>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<BotConfig> botConfig)

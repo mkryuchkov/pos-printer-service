@@ -12,20 +12,23 @@ namespace mkryuchkov.PosPrinter.Service.Printing
             CodePagesEncodingProvider.Instance.GetEncoding(866);
         private static readonly Pt210 Emitter = new();
 
-        public static byte[] GetPrintCommands<TId>(this IPrintQuery<TId> query)
+        public static byte[] GetPrintCommands(this PrintQuery<MessageInfo> query)
         {
             return query.Type switch
             {
-                PrintQueryType.Text => WrapCommand(Emitter.Print(query.Text, Cp866)),
-                PrintQueryType.Image => WrapCommand(Emitter.PrintImage(query.Image)),
-                _ => throw new ArgumentOutOfRangeException("Unsupported query type")
+                PrintQueryType.Text => WrapCommand(Emitter.Print(query.Text, Cp866), query.Info),
+                PrintQueryType.Image => WrapCommand(Emitter.PrintImage(query.Image), query.Info),
+                _ => throw new ArgumentOutOfRangeException("Unsupported print type")
             };
         }
 
-        private static byte[] WrapCommand(byte[] command)
+        private const string TimeFormat = "HH:mm:ss dd.MM.yyyy";
+
+        private static byte[] WrapCommand(byte[] command, MessageInfo info)
         {
             return ByteSplicer.Combine(
                 Emitter.Initialize(),
+                Emitter.Print($"From {info.Author}\n  at {info.Time.ToString(TimeFormat)}\n"),
                 command,
                 Emitter.FeedLines(3),
                 Emitter.Beep()

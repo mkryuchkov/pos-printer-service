@@ -1,9 +1,9 @@
 using System;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using mkryuchkov.PosPrinter.Common;
 using mkryuchkov.PosPrinter.Service.Core;
 
 namespace mkryuchkov.PosPrinter.Service.Queue;
@@ -38,7 +38,7 @@ public sealed class QueueConsumer<TEntity> : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error hadlning entity {entity}", JsonSerializer.Serialize(entity));
+                _logger.LogError(ex, "Error hadlning entity {entity}", entity.ToJson());
             }
         }
     }

@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using mkryuchkov.PosPrinter.Model.Core;
@@ -8,6 +7,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using mkryuchkov.TgBot;
 using mkryuchkov.PosPrinter.Service.Core;
+using mkryuchkov.PosPrinter.Common;
 
 namespace mkryuchkov.PosPrinter.Service.TgBot
 {
@@ -15,12 +15,12 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
     {
         private readonly ILogger<TgUpdateHandler> _logger;
         private readonly ITelegramBotClient _botClient;
-        private readonly IQueue<IPrintQuery<int>> _queue;
+        private readonly IQueue<PrintQuery<MessageInfo>> _queue;
 
         public TgUpdateHandler(
             ILogger<TgUpdateHandler> logger,
             ITelegramBotClient botClient,
-            IQueue<IPrintQuery<int>> queue)
+            IQueue<PrintQuery<MessageInfo>> queue)
         {
             _logger = logger;
             _botClient = botClient;
@@ -33,21 +33,22 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
 
             if (update.Type == UpdateType.Message)
             {
-                await _botClient.SendTextMessageAsync(update.Message!.Chat.Id,
-                    $"Hi. Your message:\n```{update.Message.Text}```",
-                    ParseMode.Markdown, cancellationToken: cancellationToken);
-                await _queue.EnqueueAsync(new PrintQuery<int>
-                {
-                    Id = update.Message.MessageId,
-                    Type = PrintQueryType.Text,
-                    Text = update.Message.Text
-                }, cancellationToken);
+                await _botClient.SendTextMessageAsync(
+                    update.Message!.Chat.Id,
+                    "Gonna print it!",
+                    ParseMode.Markdown,
+                    replyToMessageId: update.Message.MessageId,
+                    cancellationToken: cancellationToken);
+
+                await _queue.EnqueueAsync(update.Message.GetPrintQuery(), cancellationToken);
             }
             else
             {
-                await _botClient.SendTextMessageAsync(update.Message!.Chat.Id,
-                    $"Hi. Your update:\n```{JsonSerializer.Serialize(update)}```",
-                    ParseMode.Markdown, cancellationToken: cancellationToken);
+                await _botClient.SendTextMessageAsync(
+                    update.Message!.Chat.Id,
+                    $"Can`t process this:\n```{update.ToJson()}```",
+                    ParseMode.Markdown,
+                    cancellationToken: cancellationToken);
             }
         }
     }

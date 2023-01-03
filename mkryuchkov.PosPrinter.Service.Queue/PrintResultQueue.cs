@@ -3,10 +3,10 @@ using mkryuchkov.PosPrinter.Model.Core;
 
 namespace mkryuchkov.PosPrinter.Service.Queue
 {
-    public class PrintResultQueue : QueueBase<IPrintResult<int>>
+    public class PrintResultQueue : QueueBase<PrintResult<MessageInfo>>
     {
         public PrintResultQueue(
-            ILogger<QueueBase<IPrintResult<int>>> logger,
+            ILogger<PrintResultQueue> logger,
             int capacity = 100)
             : base(logger, capacity)
         {

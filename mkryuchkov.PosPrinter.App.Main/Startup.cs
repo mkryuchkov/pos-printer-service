@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using mkryuchkov.PosPrinter.Model.Core;
 using mkryuchkov.PosPrinter.Service.Core;
 using mkryuchkov.PosPrinter.Service.Printing;
+using mkryuchkov.PosPrinter.Service.Printing.Configuration;
 using mkryuchkov.PosPrinter.Service.Queue;
 using mkryuchkov.PosPrinter.Service.TgBot;
 using mkryuchkov.TgBot;
@@ -29,9 +30,10 @@ namespace mkryuchkov.PosPrinter.App.Main
             services
                 .AddSingleton<IQueue<IPrintQuery<int>>, PrintQueryQueue>()
                 .AddSingleton<IQueue<IPrintResult<int>>, PrintResultQueue>()
+                .AddPrinterConfig(Configuration)
                 .AddQueueHandler<IPrintQuery<int>, PrintQueryHandler>()
                 .AddTgBot(Configuration)
-                .AddSingleton<ITgUpdateHandler, PosPrinterBot>();
+                .AddSingleton<ITgUpdateHandler, TgUpdateHandler>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<BotConfig> botConfig)

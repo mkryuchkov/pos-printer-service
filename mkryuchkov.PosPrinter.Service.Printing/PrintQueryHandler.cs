@@ -1,12 +1,8 @@
 using System;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using ESCPOS_NET;
-using ESCPOS_NET.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using mkryuchkov.ESCPOS.Goojprt;
 using mkryuchkov.PosPrinter.Model.Core;
 using mkryuchkov.PosPrinter.Service.Core;
 using mkryuchkov.PosPrinter.Service.Printing.Configuration;
@@ -15,9 +11,6 @@ namespace mkryuchkov.PosPrinter.Service.Printing
 {
     public sealed class PrintQueryHandler : IQueueHandler<IPrintQuery<int>>
     {
-        private static readonly Encoding Cp866 =
-            CodePagesEncodingProvider.Instance.GetEncoding(866);
-
         private readonly ILogger<PrintQueryHandler> _logger;
         private readonly PrinterConfig _config;
         private readonly IQueue<IPrintResult<int>> _resultQueue;
@@ -32,45 +25,46 @@ namespace mkryuchkov.PosPrinter.Service.Printing
             _resultQueue = resultQueue;
         }
 
-        public async Task HandleAsync(IPrintQuery<int> item, CancellationToken token)
+        public async Task HandleAsync(IPrintQuery<int> query, CancellationToken token)
         {
-            while (true) // todo: retry policy (polly?)
+            var tryCount = _config.RetryMaxCount;
+            Exception lastException = null;
+            while (tryCount-- > 0)
             {
                 try
                 {
-                    _logger.LogDebug("Printing {item}", item);
+                    _logger.LogDebug("Printing {query}", query);
 
-                    if (item.Type == PrintQueryType.Text) // todo: other types // refactor
-                    {
-                        using var printer = new SerialPrinter("COM4", 9600); // todo: settings for printer
-                        var emitter = new Pt210();
-                        printer.Write(ByteSplicer.Combine(
-                            emitter.Initialize(),
-                            emitter.Print(item.Text, Cp866),
-                            emitter.FeedLines(3),
-                            emitter.Beep()
-                        ));
+                    using var printer = _config.GetPrinter();
+                    printer.Write(query.GetPrintCommands());
 
-                        await Task.Delay(5000, token);
-                    }
+                    await Task.Delay(_config.RetryDelayMs, token);
+
+                    break;
+                }
+                catch (ArgumentOutOfRangeException ex)
+                {
+                    _logger.LogError(ex, "Can't print {query}", query);
+                    lastException = ex;
 
                     break;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error trying to print {item}", item);
+                    _logger.LogError(ex, "Error trying to print {query}", query);
+                    lastException = ex;
+                    await Task.Delay(_config.RetryDelayMs, token);
                 }
-
-                await Task.Delay(5000, token); // next try delay
             }
 
             await _resultQueue.EnqueueAsync(new PrintResult<int>
             {
-                Id = item.Id,
-                Success = true
+                Id = query.Id,
+                Success = lastException == null,
+                ErrorData = lastException?.Message
             }, token);
 
-            _logger.LogDebug("Printed {item}", item);
+            _logger.LogDebug("Printed {query}", query);
         }
     }
 }

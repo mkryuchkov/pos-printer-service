@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -37,7 +38,7 @@ public sealed class QueueConsumer<TEntity> : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error hadlning entity {enityt}", entity); // todo: Serialize entity?
+                _logger.LogError(ex, "Error hadlning entity {entity}", JsonSerializer.Serialize(entity));
             }
         }
     }

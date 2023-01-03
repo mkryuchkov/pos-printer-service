@@ -11,14 +11,14 @@ using mkryuchkov.PosPrinter.Service.Core;
 
 namespace mkryuchkov.PosPrinter.Service.TgBot
 {
-    public class PosPrinterBot : ITgUpdateHandler
+    public sealed class TgUpdateHandler : ITgUpdateHandler
     {
-        private readonly ILogger<PosPrinterBot> _logger;
+        private readonly ILogger<TgUpdateHandler> _logger;
         private readonly ITelegramBotClient _botClient;
         private readonly IQueue<IPrintQuery<int>> _queue;
 
-        public PosPrinterBot(
-            ILogger<PosPrinterBot> logger,
+        public TgUpdateHandler(
+            ILogger<TgUpdateHandler> logger,
             ITelegramBotClient botClient,
             IQueue<IPrintQuery<int>> queue)
         {

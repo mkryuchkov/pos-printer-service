@@ -14,25 +14,28 @@ namespace mkryuchkov.PosPrinter.Service.Printing
 
         public static byte[] GetPrintCommands(this PrintQuery<MessageInfo> query)
         {
-            return query.Type switch
-            {
-                PrintQueryType.Text => WrapCommand(Emitter.Print(query.Text, Cp866), query.Info),
-                PrintQueryType.Image => WrapCommand(Emitter.PrintImage(query.Image), query.Info),
-                _ => throw new ArgumentOutOfRangeException("Unsupported print type")
-            };
-        }
-
-        private const string TimeFormat = "HH:mm:ss dd.MM.yyyy";
-
-        private static byte[] WrapCommand(byte[] command, MessageInfo info)
-        {
             return ByteSplicer.Combine(
                 Emitter.Initialize(),
-                Emitter.Print($"From {info.Author}\n  at {info.Time.ToString(TimeFormat)}\n"),
-                command,
+                Emitter.Print($"From {query.Info.Author}\n  at {query.Info.Time.FormatTimeToMsk()}\n"),
+                Emitter.FeedDots(5),
+                query.Image != null
+                    ? Emitter.PrintImage(query.Image)
+                    : Array.Empty<byte>(),
+                query.Text != null
+                    ? Emitter.Print(query.Text, Cp866)
+                    : Array.Empty<byte>(),
                 Emitter.FeedLines(3),
                 Emitter.Beep()
             );
+        }
+
+        // todo: parameters or localization
+        private const string TimeFormat = "HH:mm:ss dd.MM.yyyy";
+        private const string TimeZone = "Russian Standard Time";
+
+        private static string FormatTimeToMsk(this DateTime time)
+        {
+            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(time, TimeZone).ToString(TimeFormat);
         }
     }
 }

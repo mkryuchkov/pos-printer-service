@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using mkryuchkov.PosPrinter.Model.Core;
@@ -8,6 +9,7 @@ using Telegram.Bot.Types.Enums;
 using mkryuchkov.TgBot;
 using mkryuchkov.PosPrinter.Service.Core;
 using mkryuchkov.PosPrinter.Common;
+using System.Linq;
 
 namespace mkryuchkov.PosPrinter.Service.TgBot
 {
@@ -31,8 +33,10 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
         {
             _logger.LogInformation("Update received. Type: {type}", update.Type);
 
+            // todo: if photo or text exists
             if (update.Type == UpdateType.Message)
             {
+                // todo: localization of messages
                 await _botClient.SendTextMessageAsync(
                     update.Message!.Chat.Id,
                     "Gonna print it!",
@@ -40,7 +44,9 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
                     replyToMessageId: update.Message.MessageId,
                     cancellationToken: cancellationToken);
 
-                await _queue.EnqueueAsync(update.Message.GetPrintQuery(), cancellationToken);
+                await _queue.EnqueueAsync(
+                    await GetPrintQueryAsync(update.Message, cancellationToken),
+                    cancellationToken);
             }
             else
             {
@@ -50,6 +56,42 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
                     ParseMode.Markdown,
                     cancellationToken: cancellationToken);
             }
+        }
+
+        private async Task<PrintQuery<MessageInfo>> GetPrintQueryAsync(Message message, CancellationToken token)
+        {
+            return new PrintQuery<MessageInfo>
+            {
+                Text = message.Text,
+                Image = await GetPhotoAsync(message, token), // todo: photo caption
+                Info = new()
+                {
+                    ChatId = message.Chat.Id,
+                    MesageId = message.MessageId,
+                    Author = message.From.Username,
+                    Time = message.Date
+                }
+            };
+        }
+
+        private const long TwentyMiBs = 20 * 1024 * 1024;
+
+        private async Task<byte[]> GetPhotoAsync(Message message, CancellationToken token)
+        {
+            if (message.Photo != null && message.Photo.Length > 0)
+            {
+                var photoId = message.Photo
+                    .Where(p => p.FileSize < TwentyMiBs)
+                    .MaxBy(p => p.FileSize)
+                    .FileId;
+                using (var stream = new MemoryStream())
+                {
+                    await _botClient.GetInfoAndDownloadFileAsync(photoId, stream, token);
+                    return stream.ToArray();
+                }
+            }
+
+            return null;
         }
     }
 }

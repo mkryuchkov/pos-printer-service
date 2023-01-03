@@ -37,10 +37,12 @@ namespace mkryuchkov.PosPrinter.Service.Printing
             {
                 try
                 {
-                    using var printer = _config.GetPrinter();
-                    printer.Write(query.GetPrintCommands());
+                    using (var printer = _config.GetPrinter())
+                    {
+                        printer.Write(query.GetPrintCommands());
 
-                    await Task.Delay(_config.RetryDelayMs, token);
+                        await Task.Delay(_config.RetryDelayMs, token);
+                    }
 
                     lastException = null;
                     break;

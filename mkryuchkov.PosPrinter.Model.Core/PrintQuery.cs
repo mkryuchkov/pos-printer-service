@@ -4,10 +4,8 @@
     {
         public Guid Id { get; init; } = Guid.NewGuid();
 
-        public PrintQueryType Type { get; set; }
         public string? Text { get; set; }
         public byte[]? Image { get; set; }
-
         public TInfo? Info { get; set; }
     }
 }

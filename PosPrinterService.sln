@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mkryuchkov.PosPrinter.Model
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mkryuchkov.PosPrinter.Common", "mkryuchkov.PosPrinter.Common\mkryuchkov.PosPrinter.Common.csproj", "{4F1F7725-99F0-4752-BA65-B6F93D822EB2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mkryuchkov.PosPrinter.Localization", "mkryuchkov.PosPrinter.Localization\mkryuchkov.PosPrinter.Localization.csproj", "{E79BFF3D-4F3F-4E04-A7B3-0FB56537615A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{4F1F7725-99F0-4752-BA65-B6F93D822EB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F1F7725-99F0-4752-BA65-B6F93D822EB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F1F7725-99F0-4752-BA65-B6F93D822EB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E79BFF3D-4F3F-4E04-A7B3-0FB56537615A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E79BFF3D-4F3F-4E04-A7B3-0FB56537615A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E79BFF3D-4F3F-4E04-A7B3-0FB56537615A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E79BFF3D-4F3F-4E04-A7B3-0FB56537615A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C095574C-4936-437D-93B5-6C3A4D8D4DEA} = {06930EC5-4ED2-44C9-BB66-A105CDD5E845}
@@ -89,5 +95,6 @@ Global
 		{1B1DD17D-8E73-4A8B-AD6E-C34578627C24} = {8C982217-78C1-44CE-8AD6-9B4B1B08C42B}
 		{98FA3B55-89D9-4865-A446-FB9D72A4997D} = {64E894DD-B2FD-4BC6-AF31-7331694EB9C2}
 		{4F1F7725-99F0-4752-BA65-B6F93D822EB2} = {8C982217-78C1-44CE-8AD6-9B4B1B08C42B}
+		{E79BFF3D-4F3F-4E04-A7B3-0FB56537615A} = {8C982217-78C1-44CE-8AD6-9B4B1B08C42B}
 	EndGlobalSection
 EndGlobal

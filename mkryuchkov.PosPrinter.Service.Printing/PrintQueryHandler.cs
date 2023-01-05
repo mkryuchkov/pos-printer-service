@@ -29,7 +29,7 @@ namespace mkryuchkov.PosPrinter.Service.Printing
         public async Task HandleAsync(PrintQuery<MessageInfo> query, CancellationToken token)
         {
             using var scope = _logger.BeginScope("queryId", query.Id);
-            _logger.LogDebug("Printing {query}", query.ToJson());
+            _logger.LogInformation("Printing {query}", query.ToJson());
 
             var tryCount = _config.RetryMaxCount;
             Exception lastException = null;
@@ -71,7 +71,7 @@ namespace mkryuchkov.PosPrinter.Service.Printing
                 Info = query.Info
             }, token);
 
-            _logger.LogDebug("Printed.");
+            _logger.LogInformation("Printed.");
         }
     }
 }

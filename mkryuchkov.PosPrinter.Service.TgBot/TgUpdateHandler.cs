@@ -10,6 +10,9 @@ using mkryuchkov.TgBot;
 using mkryuchkov.PosPrinter.Service.Core;
 using mkryuchkov.PosPrinter.Common;
 using System.Linq;
+using Microsoft.Extensions.Localization;
+using mkryuchkov.PosPrinter.Localization;
+using System.Globalization;
 
 namespace mkryuchkov.PosPrinter.Service.TgBot
 {
@@ -18,15 +21,18 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
         private readonly ILogger<TgUpdateHandler> _logger;
         private readonly ITelegramBotClient _botClient;
         private readonly IQueue<PrintQuery<MessageInfo>> _queue;
+        private readonly IStringLocalizer<Shared> _localizer;
 
         public TgUpdateHandler(
             ILogger<TgUpdateHandler> logger,
             ITelegramBotClient botClient,
-            IQueue<PrintQuery<MessageInfo>> queue)
+            IQueue<PrintQuery<MessageInfo>> queue,
+            IStringLocalizer<Shared> localizer)
         {
             _logger = logger;
             _botClient = botClient;
             _queue = queue;
+            _localizer = localizer;
         }
 
         public async Task Handle(Update update, CancellationToken cancellationToken)
@@ -37,9 +43,19 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
             if (update.Type == UpdateType.Message)
             {
                 // todo: localization of messages
+
+                if (!string.IsNullOrWhiteSpace(update.Message.From.LanguageCode))
+                {
+                    CultureInfo.CurrentUICulture = update.Message.From.LanguageCode switch
+                    {
+                        "ru" => new CultureInfo("ru-ru"),
+                        _ => new CultureInfo("en-us")
+                    };
+                }
+
                 await _botClient.SendTextMessageAsync(
                     update.Message!.Chat.Id,
-                    "Gonna print it!",
+                    _localizer["Gonna print it!"],
                     ParseMode.Markdown,
                     replyToMessageId: update.Message.MessageId,
                     cancellationToken: cancellationToken);
@@ -64,11 +80,11 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
             {
                 Text = message.Text,
                 Image = await GetPhotoAsync(message, token), // todo: photo caption
-                Info = new()
+                Info = new MessageInfo()
                 {
                     ChatId = message.Chat.Id,
                     MesageId = message.MessageId,
-                    Author = message.From.Username,
+                    Author = message.From?.Username,
                     Time = message.Date
                 }
             };
@@ -78,20 +94,19 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
 
         private async Task<byte[]> GetPhotoAsync(Message message, CancellationToken token)
         {
-            if (message.Photo != null && message.Photo.Length > 0)
+            if (message.Photo == null || message.Photo.Length == 0)
             {
-                var photoId = message.Photo
-                    .Where(p => p.FileSize < TwentyMiBs)
-                    .MaxBy(p => p.FileSize)
-                    .FileId;
-                using (var stream = new MemoryStream())
-                {
-                    await _botClient.GetInfoAndDownloadFileAsync(photoId, stream, token);
-                    return stream.ToArray();
-                }
+                return null;
             }
 
-            return null;
+            var photoId = message.Photo
+                .Where(p => p.FileSize < TwentyMiBs)
+                .MaxBy(p => p.FileSize)!
+                .FileId;
+
+            using var stream = new MemoryStream();
+            await _botClient.GetInfoAndDownloadFileAsync(photoId, stream, token);
+            return stream.ToArray();
         }
     }
 }

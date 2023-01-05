@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using mkryuchkov.PosPrinter.Localization;
 using mkryuchkov.PosPrinter.Model.Core;
 using mkryuchkov.PosPrinter.Service.Core;
 using mkryuchkov.PosPrinter.Service.Printing;
@@ -27,6 +28,7 @@ namespace mkryuchkov.PosPrinter.App.Main
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSharedLocalization();
             services.AddSingleton<IQueue<PrintQuery<MessageInfo>>, PrintQueryQueue>();
             services.AddSingleton<IQueue<PrintResult<MessageInfo>>, PrintResultQueue>();
             services.AddPrinterConfig(Configuration);

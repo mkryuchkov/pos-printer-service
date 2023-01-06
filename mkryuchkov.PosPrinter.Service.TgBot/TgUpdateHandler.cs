@@ -36,6 +36,12 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
         {
             _logger.LogInformation("Update received. Type: {type}", update.Type);
 
+            // todo: whitelist or something
+            // todo: max length for text // max height for image
+            // todo: /start /help etc.
+            // todo: text word wrap (25?)
+            // todo: ?? /cancel in reply to remove from queue
+
             if (update.Type == UpdateType.Message && (
                 update.Message!.Text != null || update.Message.Photo != null))
             {

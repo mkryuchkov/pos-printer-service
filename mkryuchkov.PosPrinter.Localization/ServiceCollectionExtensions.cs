@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 
 namespace mkryuchkov.PosPrinter.Localization
 {
@@ -10,6 +11,8 @@ namespace mkryuchkov.PosPrinter.Localization
             {
                 options.ResourcesPath = "Resources";
             });
+            services.AddTransient<IStringLocalizer<Shared>, SharedStringLocalizer>();
+            services.AddTransient<ISharedStringLocalizer, SharedStringLocalizer>();
             return services;
         }
     }

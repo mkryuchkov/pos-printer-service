@@ -3,7 +3,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ESCPOS_NET.Utilities;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using mkryuchkov.ESCPOS.Goojprt;
@@ -20,13 +19,13 @@ namespace mkryuchkov.PosPrinter.Service.Printing
         private readonly ILogger<PrintQueryHandler> _logger;
         private readonly PrinterConfig _config;
         private readonly IQueue<PrintResult<MessageInfo>> _resultQueue;
-        private readonly IStringLocalizer<Shared> _localizer;
+        private readonly ISharedStringLocalizer _localizer;
 
         public PrintQueryHandler(
             ILogger<PrintQueryHandler> logger,
             IOptions<PrinterConfig> config,
             IQueue<PrintResult<MessageInfo>> resultQueue,
-            IStringLocalizer<Shared> localizer)
+            ISharedStringLocalizer localizer)
         {
             _logger = logger;
             _config = config.Value;
@@ -41,13 +40,16 @@ namespace mkryuchkov.PosPrinter.Service.Printing
 
             var tryCount = _config.RetryMaxCount;
             Exception? lastException = null;
+            byte[]? commands = null;
             while (tryCount > 0)
             {
                 try
                 {
+                    commands ??= GetPrintCommands(query);
+
                     using (var printer = _config.GetPrinter())
                     {
-                        printer.Write(GetPrintCommands(query));
+                        printer.Write(commands);
 
                         await Task.Delay(_config.RetryDelayMs, token);
                     }
@@ -95,7 +97,7 @@ namespace mkryuchkov.PosPrinter.Service.Printing
 
         private byte[] GetPrintCommands(PrintQuery<MessageInfo> query)
         {
-            query.Info!.LanguageCode.SetCurrentUICulture();
+            _localizer.SetCurrentCultures(query.Info!.LanguageCode);
 
             return ByteSplicer.Combine(
                 Emitter.Initialize(),
@@ -127,15 +129,13 @@ namespace mkryuchkov.PosPrinter.Service.Printing
 
         private string GetHeader(MessageInfo info)
         {
-            return _localizer["HeaderWithFormat", info.Author!, FormatTimeToMsk(info.Time)].ReEscape();
+            return _localizer[null, "HeaderWithFormat", info.Author!, FormatTimeToMsk(info.Time)];
         }
 
-        // todo: parameters or localization
-        private static string FormatTimeToMsk(DateTime time)
+        private string FormatTimeToMsk(DateTime time)
         {
-            return TimeZoneInfo
-                .ConvertTimeBySystemTimeZoneId(time, "Russian Standard Time")
-                .ToString("HH:mm  dd.MM.yyyy");
+            var dt = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(time, _config.TimeZone!);
+            return $"{dt.ToShortTimeString()}  {dt.ToShortDateString()}";
         }
     }
 }

@@ -7,5 +7,6 @@ namespace mkryuchkov.PosPrinter.Service.Printing.Configuration
         public int BaudRate { get; init; } = 9600;
         public int RetryMaxCount { get; init; } = 3;
         public int RetryDelayMs { get; init; } = 5000;
+        public string? TimeZone { get; init; } = "Russian Standard Time";
     }
 }

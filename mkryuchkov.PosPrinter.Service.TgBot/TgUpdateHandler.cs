@@ -9,7 +9,6 @@ using Telegram.Bot.Types.Enums;
 using mkryuchkov.TgBot;
 using mkryuchkov.PosPrinter.Service.Core;
 using System.Linq;
-using Microsoft.Extensions.Localization;
 using mkryuchkov.PosPrinter.Localization;
 
 namespace mkryuchkov.PosPrinter.Service.TgBot
@@ -19,13 +18,13 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
         private readonly ILogger<TgUpdateHandler> _logger;
         private readonly ITelegramBotClient _botClient;
         private readonly IQueue<PrintQuery<MessageInfo>> _queue;
-        private readonly IStringLocalizer<Shared> _localizer;
+        private readonly ISharedStringLocalizer _localizer;
 
         public TgUpdateHandler(
             ILogger<TgUpdateHandler> logger,
             ITelegramBotClient botClient,
             IQueue<PrintQuery<MessageInfo>> queue,
-            IStringLocalizer<Shared> localizer)
+            ISharedStringLocalizer localizer)
         {
             _logger = logger;
             _botClient = botClient;
@@ -40,12 +39,9 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
             if (update.Type == UpdateType.Message && (
                 update.Message!.Text != null || update.Message.Photo != null))
             {
-                update.Message.From?.LanguageCode?.SetCurrentUICulture();
-
                 await _botClient.SendTextMessageAsync(
                     update.Message.Chat.Id,
-                    _localizer["Gonna print it!"],
-                    // ParseMode.Markdown,
+                    _localizer[update.Message.From?.LanguageCode, "Gonna print it!"],
                     replyToMessageId: update.Message.MessageId,
                     cancellationToken: cancellationToken);
 
@@ -57,8 +53,7 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
             {
                 await _botClient.SendTextMessageAsync(
                     update.Message!.Chat.Id,
-                    _localizer["Can't process this."],
-                    // ParseMode.Markdown,
+                    _localizer[update.Message.From?.LanguageCode, "Can't process this."],
                     replyToMessageId: update.Message.MessageId,
                     cancellationToken: cancellationToken);
             }

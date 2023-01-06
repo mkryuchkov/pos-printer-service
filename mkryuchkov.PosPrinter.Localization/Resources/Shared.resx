@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
   <data name="Gonna print it!" xml:space="preserve">
-    <value>Сейчас напечатаем!</value>
+    <value>Gonna print it!</value>
     <comment/>
   </data>
   <data name="Can't process this." xml:space="preserve">
-    <value>Не могу напечатать.</value>
+    <value>Can't process this.</value>
     <comment/>
   </data>
   <data name="Printed!" xml:space="preserve">
-    <value>Напечатано!</value>
+    <value>Printed!</value>
     <comment/>
   </data>
   <data name="ErrorWithFormat" xml:space="preserve">
-    <value>Ошибка печати:\n```\n{0}\n```</value>
+    <value>Error happened: \n ```\n{0}\n```</value>
     <comment/>
   </data>
   <data name="HeaderWithFormat" xml:space="preserve">
-    <value>От {0}\nВ  {1}\n</value>
+    <value>From {0}\n  at {1}\n</value>
     <comment/>
   </data>
 </root>

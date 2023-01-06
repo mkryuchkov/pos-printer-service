@@ -10,6 +10,8 @@ namespace mkryuchkov.PosPrinter.Model.Core
 
         public byte[]? Image { get; set; }
 
+        public string? Caption { get; set; }
+
         public TInfo? Info { get; set; }
     }
 }

@@ -100,15 +100,19 @@ public static class WordWrapExtensions
         needHyphen = false;
 
         // at least 2 chars (plus hyphen) before 
-        if (positions < 3 || word.Length < 3)
+        if (positions < 3 || word.Length < 4)
         {
             return false;
         }
 
+        var index = positions;
+
         needHyphen = char.IsLetter(word.Span[positions - 1]);
-        var index = positions
-                    - (needHyphen ? 1 : 0)
-                    - (word.Length - positions == 1 ? 1 : 0);
+        index -= (needHyphen ? 1 : 0);
+
+        var leftLetter = char.IsLetter(word.Span[index]) && !char.IsLetter(word.Span[index + 1]);
+        index -= leftLetter ? 1 : 0;
+
         parts = (word[..index], word[index..]);
         return true;
     }

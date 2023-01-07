@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.Processing.Processors.Dithering;
 
 namespace mkryuchkov.ESCPOS.Goojprt
 {
-    public static class ImageSharpExtensions
+    internal static class ImageSharpExtensions
     {
         public static byte[] ToSingleBitPixelByteArray(
             this Image<Rgba32> image,

@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# 
+#
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pt-210-test", "pt-210-test\pt-210-test.csproj", "{C095574C-4936-437D-93B5-6C3A4D8D4DEA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "etc", "etc", "{06930EC5-4ED2-44C9-BB66-A105CDD5E845}"
@@ -32,6 +32,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mkryuchkov.PosPrinter.Common", "mkryuchkov.PosPrinter.Common\mkryuchkov.PosPrinter.Common.csproj", "{4F1F7725-99F0-4752-BA65-B6F93D822EB2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mkryuchkov.PosPrinter.Localization", "mkryuchkov.PosPrinter.Localization\mkryuchkov.PosPrinter.Localization.csproj", "{E79BFF3D-4F3F-4E04-A7B3-0FB56537615A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mkryuchkov.WordWrap", "mkryuchkov.WordWrap\mkryuchkov.WordWrap.csproj", "{5729A7BE-62E0-4DB1-9245-DD2E1B0F3103}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mkryuchkov.WordWrap.Tests", "mkryuchkov.WordWrap.Tests\mkryuchkov.WordWrap.Tests.csproj", "{0ABB6DC3-FC23-4CA1-9B86-4BC1BA8C34B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +87,14 @@ Global
 		{E79BFF3D-4F3F-4E04-A7B3-0FB56537615A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E79BFF3D-4F3F-4E04-A7B3-0FB56537615A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E79BFF3D-4F3F-4E04-A7B3-0FB56537615A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5729A7BE-62E0-4DB1-9245-DD2E1B0F3103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5729A7BE-62E0-4DB1-9245-DD2E1B0F3103}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5729A7BE-62E0-4DB1-9245-DD2E1B0F3103}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5729A7BE-62E0-4DB1-9245-DD2E1B0F3103}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0ABB6DC3-FC23-4CA1-9B86-4BC1BA8C34B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ABB6DC3-FC23-4CA1-9B86-4BC1BA8C34B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ABB6DC3-FC23-4CA1-9B86-4BC1BA8C34B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ABB6DC3-FC23-4CA1-9B86-4BC1BA8C34B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C095574C-4936-437D-93B5-6C3A4D8D4DEA} = {06930EC5-4ED2-44C9-BB66-A105CDD5E845}
@@ -96,5 +108,7 @@ Global
 		{98FA3B55-89D9-4865-A446-FB9D72A4997D} = {64E894DD-B2FD-4BC6-AF31-7331694EB9C2}
 		{4F1F7725-99F0-4752-BA65-B6F93D822EB2} = {8C982217-78C1-44CE-8AD6-9B4B1B08C42B}
 		{E79BFF3D-4F3F-4E04-A7B3-0FB56537615A} = {8C982217-78C1-44CE-8AD6-9B4B1B08C42B}
+		{5729A7BE-62E0-4DB1-9245-DD2E1B0F3103} = {8C982217-78C1-44CE-8AD6-9B4B1B08C42B}
+		{0ABB6DC3-FC23-4CA1-9B86-4BC1BA8C34B5} = {8C982217-78C1-44CE-8AD6-9B4B1B08C42B}
 	EndGlobalSection
 EndGlobal

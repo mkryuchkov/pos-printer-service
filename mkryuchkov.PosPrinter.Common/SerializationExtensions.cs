@@ -2,7 +2,7 @@
 
 namespace mkryuchkov.PosPrinter.Common
 {
-    public static class SerilalizationExtensions
+    public static class SerializationExtensions
     {
         public static string ToJson(this object obj) => JsonSerializer.Serialize(obj);
     }

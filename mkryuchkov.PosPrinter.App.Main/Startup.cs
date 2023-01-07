@@ -29,11 +29,13 @@ namespace mkryuchkov.PosPrinter.App.Main
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSharedLocalization();
+
             services.AddSingleton<IQueue<PrintQuery<MessageInfo>>, PrintQueryQueue>();
             services.AddSingleton<IQueue<PrintResult<MessageInfo>>, PrintResultQueue>();
-            services.AddPrinterConfig(Configuration);
+            services.AddQueryPrinting(Configuration);
             services.AddQueueHandler<PrintQuery<MessageInfo>, PrintQueryHandler>();
             services.AddQueueHandler<PrintResult<MessageInfo>, PrintResultHandler>();
+
             services.AddTgBot(Configuration);
             services.AddSingleton<ITgUpdateHandler, TgUpdateHandler>();
         }

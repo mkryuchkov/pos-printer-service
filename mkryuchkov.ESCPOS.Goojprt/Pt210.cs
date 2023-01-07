@@ -3,6 +3,7 @@ using System.Text;
 using ESCPOS_NET.Emitters;
 using ESCPOS_NET.Emitters.BaseCommandValues;
 using ESCPOS_NET.Utilities;
+using mkryuchkov.WordWrap;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing.Processors.Dithering;
@@ -15,6 +16,7 @@ namespace mkryuchkov.ESCPOS.Goojprt
     public sealed class Pt210 : EPSON
     {
         private const int MaxWidth = 384;
+        private const int MaxLineWidth = 32;
 
         /// <summary>
         /// Beep <paramref name="count"/> times.
@@ -37,10 +39,11 @@ namespace mkryuchkov.ESCPOS.Goojprt
         /// </summary>
         /// <param name="data">Text.</param>
         /// <param name="encoding">Encoding.</param>
+        /// <param name="wrap">Wrap words or not.</param>
         /// <returns>Printer command set.</returns>
-        public byte[] Print(string data, Encoding encoding)
+        public byte[] Print(string data, Encoding encoding, bool wrap = false)
         {
-            return (encoding ?? Encoding.Default).GetBytes(data);
+            return (encoding ?? Encoding.Default).GetBytes(wrap ? data.Wrap(MaxLineWidth) : data);
         }
 
         /// <summary>

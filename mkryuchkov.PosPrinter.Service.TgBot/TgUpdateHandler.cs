@@ -72,7 +72,7 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
                 Text = message.Text,
                 Image = await GetPhotoAsync(message, token),
                 Caption = message.Caption,
-                Info = new MessageInfo()
+                Info = new MessageInfo
                 {
                     ChatId = message.Chat.Id,
                     MesageId = message.MessageId,
@@ -102,12 +102,9 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
             return stream.ToArray();
         }
 
-        private string? GetAuthor(User? user)
+        private static string GetAuthor(User? user)
         {
-            var author = $"{user?.FirstName} {user?.LastName}";
-            return string.IsNullOrWhiteSpace(author)
-                ? user?.Username
-                : author;
+            return $"{user?.FirstName} {user?.LastName} ({user?.Username})";
         }
     }
 }

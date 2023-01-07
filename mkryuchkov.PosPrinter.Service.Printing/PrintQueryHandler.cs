@@ -1,16 +1,13 @@
 using System;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using ESCPOS_NET.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using mkryuchkov.ESCPOS.Goojprt;
 using mkryuchkov.PosPrinter.Common;
-using mkryuchkov.PosPrinter.Localization;
 using mkryuchkov.PosPrinter.Model.Core;
 using mkryuchkov.PosPrinter.Service.Core;
 using mkryuchkov.PosPrinter.Service.Printing.Configuration;
+using mkryuchkov.PosPrinter.Service.Printing.Interfaces;
 
 namespace mkryuchkov.PosPrinter.Service.Printing
 {
@@ -19,18 +16,18 @@ namespace mkryuchkov.PosPrinter.Service.Printing
         private readonly ILogger<PrintQueryHandler> _logger;
         private readonly PrinterConfig _config;
         private readonly IQueue<PrintResult<MessageInfo>> _resultQueue;
-        private readonly ISharedStringLocalizer _localizer;
+        private readonly IPrintQueryTranslator _translator;
 
         public PrintQueryHandler(
             ILogger<PrintQueryHandler> logger,
             IOptions<PrinterConfig> config,
             IQueue<PrintResult<MessageInfo>> resultQueue,
-            ISharedStringLocalizer localizer)
+            IPrintQueryTranslator translator)
         {
             _logger = logger;
             _config = config.Value;
             _resultQueue = resultQueue;
-            _localizer = localizer;
+            _translator = translator;
         }
 
         public async Task HandleAsync(PrintQuery<MessageInfo> query, CancellationToken token)
@@ -45,7 +42,7 @@ namespace mkryuchkov.PosPrinter.Service.Printing
             {
                 try
                 {
-                    commands ??= GetPrintCommands(query);
+                    commands ??= _translator.GetPrintCommands(query);
 
                     using (var printer = _config.GetPrinter())
                     {
@@ -89,53 +86,6 @@ namespace mkryuchkov.PosPrinter.Service.Printing
             {
                 _logger.LogInformation("Printed.");
             }
-        }
-
-        private static readonly Encoding Cp866 =
-            CodePagesEncodingProvider.Instance.GetEncoding(866)!;
-        private static readonly Pt210 Emitter = new();
-
-        private byte[] GetPrintCommands(PrintQuery<MessageInfo> query)
-        {
-            _localizer.SetCurrentCultures(query.Info!.LanguageCode);
-
-            return ByteSplicer.Combine(
-                Emitter.Initialize(),
-                Emitter.Print(GetHeader(query.Info!), Cp866),
-                Emitter.FeedDots(10),
-                GetImageCommands(query.Image, query.Caption),
-                query.Text != null
-                    ? Emitter.Print(query.Text, Cp866)
-                    : Array.Empty<byte>(),
-                Emitter.FeedLines(3),
-                Emitter.Beep()
-            );
-        }
-
-        private byte[] GetImageCommands(byte[]? image, string? caption)
-        {
-            return ByteSplicer.Combine(
-                image != null
-                    ? Emitter.PrintImage(image)
-                    : Array.Empty<byte>(),
-                image != null && caption != null
-                    ? Emitter.Print(caption, Cp866)
-                    : Array.Empty<byte>(),
-                image != null || caption != null
-                    ? Emitter.FeedLines(1)
-                    : Array.Empty<byte>()
-            );
-        }
-
-        private string GetHeader(MessageInfo info)
-        {
-            return _localizer[null, "HeaderWithFormat", info.Author!, FormatTimeToMsk(info.Time)];
-        }
-
-        private string FormatTimeToMsk(DateTime time)
-        {
-            var dt = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(time, _config.TimeZone!);
-            return $"{dt.ToShortTimeString()}  {dt.ToShortDateString()}";
         }
     }
 }

@@ -1,19 +1,14 @@
 using System.Globalization;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 
 namespace mkryuchkov.PosPrinter.Localization
 {
     public class SharedStringLocalizer : ISharedStringLocalizer
     {
-        private ILogger<SharedStringLocalizer> _logger;
-        private IStringLocalizer _localizer;
+        private readonly IStringLocalizer _localizer;
 
-        public SharedStringLocalizer(
-            ILogger<SharedStringLocalizer> logger,
-            IStringLocalizerFactory factory)
+        public SharedStringLocalizer(IStringLocalizerFactory factory)
         {
-            _logger = logger;
             _localizer = factory.Create(typeof(Shared));
         }
 
@@ -80,6 +75,6 @@ namespace mkryuchkov.PosPrinter.Localization
             return _localizer.GetAllStrings(includeParentCultures);
         }
 
-        private string ReEscape(string source) => source.Replace("\\n", "\n");
+        private static string ReEscape(string source) => source.Replace("\\n", "\n");
     }
 }

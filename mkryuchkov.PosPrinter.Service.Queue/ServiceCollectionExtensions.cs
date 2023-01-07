@@ -1,16 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using mkryuchkov.PosPrinter.Service.Core;
-using mkryuchkov.PosPrinter.Service.Queue;
 
-namespace mkryuchkov.TgBot.Configuration
+namespace mkryuchkov.PosPrinter.Service.Queue
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddQueueHandler<TEntity, TImplentation>(this IServiceCollection services)
+        public static IServiceCollection AddQueueHandler<TEntity, TImplementation>(this IServiceCollection services)
             where TEntity : class
-            where TImplentation : class, IQueueHandler<TEntity>
+            where TImplementation : class, IQueueHandler<TEntity>
         {
-            services.AddSingleton<IQueueHandler<TEntity>, TImplentation>();
+            services.AddSingleton<IQueueHandler<TEntity>, TImplementation>();
             services.AddHostedService<QueueConsumer<TEntity>>();
 
             return services;

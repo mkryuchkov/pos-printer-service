@@ -8,4 +8,8 @@
         <PackageReference Include="ESCPOS_NET" Version="3.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\mkryuchkov.WordWrap\mkryuchkov.WordWrap.csproj" />
+    </ItemGroup>
+
 </Project>

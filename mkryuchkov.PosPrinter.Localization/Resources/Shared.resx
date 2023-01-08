@@ -20,4 +20,8 @@
     <value>From {0}\nat {1}\n</value>
     <comment/>
   </data>
+  <data name="HelloMessage" xml:space="preserve">
+    <value>Hello! I can print text, images and stickers. Try send me something!</value>
+    <comment/>
+  </data>
 </root>

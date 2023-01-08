@@ -10,6 +10,7 @@ using mkryuchkov.TgBot;
 using mkryuchkov.PosPrinter.Service.Core;
 using System.Linq;
 using mkryuchkov.PosPrinter.Localization;
+using mkryuchkov.PosPrinter.Common;
 
 namespace mkryuchkov.PosPrinter.Service.TgBot
 {
@@ -38,11 +39,27 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
 
             // todo: whitelist or something
             // todo: max length for text // max height for image
-            // todo: /start /help etc.
+            // todo: non-message updates
+            // todo: emoji in text
 
             if (update.Type == UpdateType.Message
-                && ((update.Message!.Sticker != null && !update.Message.Sticker.IsAnimated && !update.Message.Sticker.IsVideo)
-                    || update.Message!.Text != null
+                && update.Message != null
+                && update.Message.Text != null
+                && update.Message.Text.StartsWith('/'))
+            {
+                _logger.LogDebug($"Command {update.Message.Text} from {update.Message.From?.Username}.");
+
+                await _botClient.SendTextMessageAsync(
+                    update.Message.Chat.Id,
+                    _localizer[update.Message.From?.LanguageCode, "HelloMessage"],
+                    cancellationToken: cancellationToken);
+                return;
+            }
+
+            if (update.Type == UpdateType.Message
+                && update.Message != null
+                && ((update.Message.Sticker != null && !update.Message.Sticker.IsAnimated && !update.Message.Sticker.IsVideo)
+                    || update.Message.Text != null
                     || update.Message.Photo != null))
             {
                 await _botClient.SendTextMessageAsync(
@@ -57,11 +74,20 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
             }
             else
             {
-                await _botClient.SendTextMessageAsync(
-                    update.Message!.Chat.Id,
-                    _localizer[update.Message.From?.LanguageCode, "Can't process this."],
-                    replyToMessageId: update.Message.MessageId,
-                    cancellationToken: cancellationToken);
+                _logger.LogDebug($"Unprintable from {update.Message?.From?.Username}.");
+
+                if (update.Type == UpdateType.Message && update.Message != null)
+                {
+                    await _botClient.SendTextMessageAsync(
+                        update.Message.Chat.Id,
+                        _localizer[update.Message.From?.LanguageCode, "Can't process this."],
+                        replyToMessageId: update.Message.MessageId,
+                        cancellationToken: cancellationToken);
+                }
+                if (update.Type == UpdateType.MyChatMember && update.MyChatMember != null)
+                {
+                    _logger.LogDebug(update.MyChatMember.ToJson());
+                }
             }
         }
 

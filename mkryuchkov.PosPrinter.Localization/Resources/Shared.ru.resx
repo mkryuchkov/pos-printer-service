@@ -20,4 +20,8 @@
     <value>От {0}\nв {1}\n</value>
     <comment/>
   </data>
+  <data name="HelloMessage" xml:space="preserve">
+    <value>Привет! Я могу печатать текст, картинки и стикеры. Попробуй отправить что-нибудь!</value>
+    <comment/>
+  </data>
 </root>

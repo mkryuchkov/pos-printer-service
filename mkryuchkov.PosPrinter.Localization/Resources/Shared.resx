@@ -17,7 +17,7 @@
     <comment/>
   </data>
   <data name="HeaderWithFormat" xml:space="preserve">
-    <value>From {0}\n  at {1}\n</value>
+    <value>From {0}\nat {1}\n</value>
     <comment/>
   </data>
 </root>

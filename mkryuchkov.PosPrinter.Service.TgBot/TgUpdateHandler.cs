@@ -39,11 +39,11 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
             // todo: whitelist or something
             // todo: max length for text // max height for image
             // todo: /start /help etc.
-            // todo: text word wrap (25?)
-            // todo: ?? /cancel in reply to remove from queue
 
-            if (update.Type == UpdateType.Message && (
-                update.Message!.Text != null || update.Message.Photo != null))
+            if (update.Type == UpdateType.Message
+                && ((update.Message!.Sticker != null && !update.Message.Sticker.IsAnimated && !update.Message.Sticker.IsVideo)
+                    || update.Message!.Text != null
+                    || update.Message.Photo != null))
             {
                 await _botClient.SendTextMessageAsync(
                     update.Message.Chat.Id,
@@ -70,7 +70,7 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
             return new PrintQuery<MessageInfo>
             {
                 Text = message.Text,
-                Image = await GetPhotoAsync(message, token),
+                Image = await GetImageAsync(message, token),
                 Caption = message.Caption,
                 Info = new MessageInfo
                 {
@@ -85,26 +85,36 @@ namespace mkryuchkov.PosPrinter.Service.TgBot
 
         private const long TwentyMiBs = 20 * 1024 * 1024;
 
-        private async Task<byte[]?> GetPhotoAsync(Message message, CancellationToken token)
+        private async Task<byte[]?> GetImageAsync(Message message, CancellationToken token)
         {
-            if (message.Photo == null || message.Photo.Length == 0)
+            string? imageId = null;
+
+            if (message.Photo != null && message.Photo.Length > 0)
+            {
+                imageId = message.Photo
+                    .Where(p => p.FileSize < TwentyMiBs)
+                    .MaxBy(p => p.FileSize)!
+                    .FileId;
+            }
+
+            if (message.Sticker != null && !message.Sticker.IsAnimated && !message.Sticker.IsVideo)
+            {
+                imageId = message.Sticker.FileId;
+            }
+
+            if (imageId == null)
             {
                 return null;
             }
 
-            var photoId = message.Photo
-                .Where(p => p.FileSize < TwentyMiBs)
-                .MaxBy(p => p.FileSize)!
-                .FileId;
-
             using var stream = new MemoryStream();
-            await _botClient.GetInfoAndDownloadFileAsync(photoId, stream, token);
+            await _botClient.GetInfoAndDownloadFileAsync(imageId, stream, token);
             return stream.ToArray();
         }
 
         private static string GetAuthor(User? user)
         {
-            return $"{user?.FirstName} {user?.LastName} ({user?.Username})";
+            return $"{user?.FirstName} ({user?.Username})";
         }
     }
 }

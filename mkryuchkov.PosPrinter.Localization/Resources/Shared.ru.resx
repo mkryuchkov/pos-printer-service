@@ -17,7 +17,7 @@
     <comment/>
   </data>
   <data name="HeaderWithFormat" xml:space="preserve">
-    <value>От {0}\nВ  {1}\n</value>
+    <value>От {0}\nв {1}\n</value>
     <comment/>
   </data>
 </root>

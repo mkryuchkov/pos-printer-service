@@ -51,7 +51,7 @@ public sealed class PrintQueryTranslator : IPrintQueryTranslator
     private string FormatTimeToMsk(DateTime time)
     {
         var dt = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(time, _config.TimeZone!);
-        return $"{dt.ToShortTimeString()}  {dt.ToShortDateString()}";
+        return $"{dt.ToShortTimeString()} {dt.ToShortDateString()}";
     }
 
     private static byte[] GetImageCommands(byte[]? image, string? caption)

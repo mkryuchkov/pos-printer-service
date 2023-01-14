@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <RootNamespace>mkryuchkov.PosPrinter.App.Main</RootNamespace>
+        <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\mkryuchkov.PosPrinter.Service.PrintService\mkryuchkov.PosPrinter.Service.PrintService.csproj" />
+      <ProjectReference Include="..\mkryuchkov.PosPrinter.Service.Printing\mkryuchkov.PosPrinter.Service.Printing.csproj" />
       <ProjectReference Include="..\mkryuchkov.PosPrinter.Service.Queue\mkryuchkov.PosPrinter.Service.Queue.csproj" />
       <ProjectReference Include="..\mkryuchkov.PosPrinter.Service.TgBot\mkryuchkov.PosPrinter.Service.TgBot.csproj" />
     </ItemGroup>

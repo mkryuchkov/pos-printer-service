@@ -17,9 +17,11 @@ namespace pt_210_test
         {
             Console.WriteLine("Start");
 
-            IPrinter printer = OperatingSystem.IsLinux()
-                ? new FilePrinter(filePath: "/dev/usb/lp0") // "/dev/rfcomm0"
-                : new SerialPrinter("COM4", 9600);
+            IPrinter printer = OperatingSystem.IsMacOS()
+                ? new FilePrinter(filePath: "/dev/tty.PT-210")
+                : OperatingSystem.IsLinux()
+                    ? new FilePrinter(filePath: "/dev/usb/lp0") // "/dev/rfcomm0"
+                    : new SerialPrinter("COM4", 9600);
 
             var emitter = new Pt210();
             printer.Write(ByteSplicer.Combine(

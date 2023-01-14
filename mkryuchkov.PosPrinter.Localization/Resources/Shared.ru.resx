@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Gonna print it!" xml:space="preserve">
+    <value>Сейчас напечатаем!</value>
+    <comment/>
+  </data>
+  <data name="Can't process this." xml:space="preserve">
+    <value>Не могу напечатать.</value>
+    <comment/>
+  </data>
+  <data name="Printed!" xml:space="preserve">
+    <value>Напечатано!</value>
+    <comment/>
+  </data>
+  <data name="ErrorWithFormat" xml:space="preserve">
+    <value>Ошибка печати:\n```\n{0}\n```</value>
+    <comment/>
+  </data>
+  <data name="HeaderWithFormat" xml:space="preserve">
+    <value>От {0}\nв {1}\n</value>
+    <comment/>
+  </data>
+  <data name="HelloMessage" xml:space="preserve">
+    <value>Привет! Я могу печатать текст, картинки и стикеры. Попробуй отправить что-нибудь!</value>
+    <comment/>
+  </data>
+</root>

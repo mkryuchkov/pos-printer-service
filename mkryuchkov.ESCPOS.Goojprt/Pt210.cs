@@ -3,7 +3,9 @@ using System.Text;
 using ESCPOS_NET.Emitters;
 using ESCPOS_NET.Emitters.BaseCommandValues;
 using ESCPOS_NET.Utilities;
+using mkryuchkov.WordWrap;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing.Processors.Dithering;
 
 namespace mkryuchkov.ESCPOS.Goojprt
@@ -14,6 +16,7 @@ namespace mkryuchkov.ESCPOS.Goojprt
     public sealed class Pt210 : EPSON
     {
         private const int MaxWidth = 384;
+        private const int MaxLineWidth = 32;
 
         /// <summary>
         /// Beep <paramref name="count"/> times.
@@ -28,7 +31,7 @@ namespace mkryuchkov.ESCPOS.Goojprt
                 throw new ArgumentOutOfRangeException($"Count ({count}) must be in the range of 1 to 10.");
             }
 
-            return new byte[] {Cmd.ESC, 0x42, count, 0x04};
+            return new byte[] { Cmd.ESC, 0x42, count, 0x04 };
         }
 
         /// <summary>
@@ -36,10 +39,11 @@ namespace mkryuchkov.ESCPOS.Goojprt
         /// </summary>
         /// <param name="data">Text.</param>
         /// <param name="encoding">Encoding.</param>
+        /// <param name="wrap">Wrap words or not.</param>
         /// <returns>Printer command set.</returns>
-        public byte[] Print(string data, Encoding encoding)
+        public byte[] Print(string data, Encoding encoding, bool wrap = false)
         {
-            return (encoding ?? Encoding.Default).GetBytes(data);
+            return (encoding ?? Encoding.Default).GetBytes(wrap ? data.Wrap(MaxLineWidth) : data);
         }
 
         /// <summary>
@@ -71,20 +75,20 @@ namespace mkryuchkov.ESCPOS.Goojprt
             int width;
             int height;
             byte[] imageData;
-            using (var img = Image.Load(image))
+            using (var img = Image.Load<Rgba32>(image))
             {
                 imageData = img.ToSingleBitPixelByteArray(maxWidth, ditherAlg: dithering);
                 height = img.Height;
                 width = img.Width;
             }
 
-            var heightL = (byte) height;
-            var heightH = (byte) (height >> 8);
+            var heightL = (byte)height;
+            var heightH = (byte)(height >> 8);
             var byteWidth = (width + 7 & -8) / 8; // packing dots into bytes
-            var widthL = (byte) byteWidth;
-            var widthH = (byte) (byteWidth >> 8);
+            var widthL = (byte)byteWidth;
+            var widthH = (byte)(byteWidth >> 8);
             result.Append(
-                new byte[] {Cmd.GS, Images.ImageCmdLegacy, 0x30, 0x00, widthL, widthH, heightL, heightH});
+                new byte[] { Cmd.GS, Images.ImageCmdLegacy, 0x30, 0x00, widthL, widthH, heightL, heightH });
 
             result.Append(imageData);
 

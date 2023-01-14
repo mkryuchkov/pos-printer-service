@@ -6,7 +6,7 @@ namespace mkryuchkov.TgBot.Configuration
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection ConfigureTgBot(
+        public static IServiceCollection AddTgBot(
             this IServiceCollection services,
             IConfiguration configuration)
         {

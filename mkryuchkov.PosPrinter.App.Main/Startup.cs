@@ -4,7 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using mkryuchkov.PosPrinter.Localization;
+using mkryuchkov.PosPrinter.Model.Core;
 using mkryuchkov.PosPrinter.Service.Core;
+using mkryuchkov.PosPrinter.Service.Printing;
+using mkryuchkov.PosPrinter.Service.Printing.Configuration;
 using mkryuchkov.PosPrinter.Service.Queue;
 using mkryuchkov.PosPrinter.Service.TgBot;
 using mkryuchkov.TgBot;
@@ -24,11 +28,16 @@ namespace mkryuchkov.PosPrinter.App.Main
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddSingleton<IPrintQueue, PrintQueue>()
-                .AddHostedService<PrintService.PrintService>()
-                .ConfigureTgBot(Configuration)
-                .AddSingleton<ITgUpdateHandler, PosPrinterBot>();
+            services.AddSharedLocalization();
+
+            services.AddSingleton<IQueue<PrintQuery<MessageInfo>>, PrintQueryQueue>();
+            services.AddSingleton<IQueue<PrintResult<MessageInfo>>, PrintResultQueue>();
+            services.AddQueryPrinting(Configuration);
+            services.AddQueueHandler<PrintQuery<MessageInfo>, PrintQueryHandler>();
+            services.AddQueueHandler<PrintResult<MessageInfo>, PrintResultHandler>();
+
+            services.AddTgBot(Configuration);
+            services.AddSingleton<ITgUpdateHandler, TgUpdateHandler>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<BotConfig> botConfig)
